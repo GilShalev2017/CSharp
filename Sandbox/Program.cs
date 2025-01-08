@@ -146,6 +146,30 @@ class Solution
 
         return Fibonacci(index-1) + Fibonacci(index-2);
     }
+    public static int FindMaxSubArray(int[] arr)
+    {
+       int max = 0;
+       int current = 0;
+
+       for (int i=0; i<arr.Length; i++)
+       {
+            if(current >  max)
+            {
+                max = current;
+            }
+           
+            current += arr[i];
+       
+            if(current < 0)
+            {
+                current = 0;
+            }
+       }
+       if(current > max)
+            return current;
+
+       return max;
+    }
 
     public static void Main()
     {
@@ -256,5 +280,9 @@ class Solution
         var cheepest = tester.FindCheapestPrice();
         items = tester.FindCheapestThan50NIS();
         tester.PrintAllItems(items);
+        //7).Data Strcture Quizes
+        int[] array = { 1, 3, -5, 20, -40, 100, 5, 8, 10, -2, 12 };
+        Console.WriteLine("max sum is = " + FindMaxSubArray(array));
+
     }
 }
