@@ -1,0 +1,40 @@
+JWT (JSON Web Tokens) and OAuth are two different concepts used for authentication and authorization in web applications. Let's discuss how JWT authentication and authorization work in general and understand the key differences between JWT and OAuth.
+
+**JWT Authentication & Authorization:**
+
+JWT is a compact, self-contained token format that is used for securely transmitting information between parties as a JSON object. In the context of authentication and authorization:
+
+1. **Authentication**:
+   - A user logs in with their credentials (e.g., username and password) to a server.
+   - After successful authentication, the server generates a JWT containing information about the user and signs it using a secret key.
+   - The server sends the JWT to the client as part of the authentication response.
+
+2. **Authorization**:
+   - For each request to a protected resource (e.g., an API endpoint), the client includes the JWT in the request's headers.
+   - The server verifies the JWT's signature using the secret key to ensure its integrity.
+   - It checks the JWT's claims (e.g., user roles or permissions) to determine if the user is authorized to access the requested resource.
+   - If the JWT is valid and the user has the necessary permissions, the request is processed.
+
+**Key Differences Between JWT and OAuth:**
+
+1. **Purpose**:
+   - **JWT**: JWT is a token format used for authentication and authorization. It is often used for securing APIs and single sign-on (SSO) mechanisms.
+   - **OAuth**: OAuth is an open standard for authorization. It allows one application to access the resources of another on behalf of a user, without sharing the user's credentials. OAuth typically involves obtaining access tokens.
+
+2. **Authentication vs. Authorization**:
+   - **JWT**: JWT primarily deals with authentication and, to some extent, authorization. It helps verify the identity of the user.
+   - **OAuth**: OAuth is focused on authorization. It defines a protocol for obtaining access to resources after the user grants permission. OAuth doesn't handle user authentication directly but relies on an authentication mechanism.
+
+3. **Use Cases**:
+   - **JWT**: JWT is used for securing APIs and creating stateless authentication mechanisms. It's often employed in microservices architectures for user authentication and single sign-on.
+   - **OAuth**: OAuth is used for granting third-party applications limited access to a user's resources without exposing the user's credentials. It's common in scenarios like social login and API access delegation.
+
+4. **Components**:
+   - **JWT**: JWT consists of a header, payload, and signature. It is typically used as an authentication token and doesn't require a separate authorization server.
+   - **OAuth**: OAuth involves multiple components, including the client application, resource owner (user), authorization server, and resource server. It defines various flows (e.g., authorization code, implicit) for different use cases.
+
+5. **Token Exchange**:
+   - **JWT**: The JWT is issued by the authentication server and used directly by the client for authentication and authorization.
+   - **OAuth**: OAuth involves exchanging an authorization code or grant for an access token, which is then used to access protected resources.
+
+In summary, JWT is a token format used for authentication and, to some extent, authorization. It provides a compact and self-contained way to convey user information. In contrast, OAuth is primarily an authorization framework that allows one application to access resources on behalf of a user, without sharing the user's credentials directly. While they serve different purposes, they can complement each other in scenarios where both authentication and resource access control are needed.

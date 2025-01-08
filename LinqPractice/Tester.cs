@@ -6,6 +6,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace LinqPractice
 {
@@ -125,6 +127,13 @@ namespace LinqPractice
             return res;
         }
 
+        //Find all the items that their price is greater/equal to 10 using Where
+        public IEnumerable<Item> Find()
+        {
+            var res = _itemList.Where(item => item.UnitPrice >= 10);
+            return res;
+        }
+
         //Find all the items that their price is equall or greater than 10 and display their names and price, convert them to list
         //Comment pay attention that we return an anonymous type, we use dynamic! and also we need to use new in order to decalre
         //that we create new objects!
@@ -176,6 +185,22 @@ namespace LinqPractice
                 Console.WriteLine(element.ItemName + "-" + element.OrderName);
             return res;
         }
+
+        public dynamic Malam()
+        {
+            /*
+            var res = from Order in Orders.Descendants("Order")
+                      join Customer in Customers.Descendants("Customer")
+                      on (string)Order.Element("CustomerID")
+                      equals (string)Customer.Attribute("CustomerID")
+                      where Customer.Element("FullAddress").Element("City").Value == "תל אביב"
+                      select (double)Order.Element("OrderPrice") + (double)Order.Element("ShipInfo").Element("Freight");
+
+            return res.Sum();
+            */
+            return null;
+        }
+
 
         //Find all the items that belong to categories "Entertainment" & "Food" and show them only once!
         //Comment: in oredr not to mix the items of the 2 categories we find the 2 lists (and take only ItemName and not the entire Item fields

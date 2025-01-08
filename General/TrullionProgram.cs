@@ -40,7 +40,7 @@ namespace General
                 }
                 else
                 {
-                    board[rndXPosition,rndYPosition] .Value = -1;
+                    board[rndXPosition,rndYPosition].Value = -1;
                     currentNumberOfMines++;
                     if (currentNumberOfMines == numberOfMines)
                     {

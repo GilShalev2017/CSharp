@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace General
 {
     //ctrl + k + f // to indent
-    
+    /*
     internal class VaronisProgram
     {
         public class ProcessResult
@@ -94,5 +94,5 @@ namespace General
 
         }
     }
-    
+    */
 }
