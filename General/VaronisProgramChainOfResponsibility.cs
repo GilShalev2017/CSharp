@@ -1,6 +1,6 @@
 ﻿using System;
 
-/*
+
 // Handler interface
 interface ITaxCalculator
 {
@@ -88,9 +88,10 @@ class PremiumTaxCalculator : ITaxCalculator
         }
     }
 }
-
+/*
 class Program
 {
+    
     static void Main()
     {
         // Build the chain of tax calculators
@@ -108,5 +109,6 @@ class Program
         Console.WriteLine($"Salary: {salary}");
         Console.WriteLine($"Tax: {tax}");
     }
+    
 }
 */

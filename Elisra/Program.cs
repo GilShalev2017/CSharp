@@ -121,10 +121,45 @@ internal class Program
         return (res + 1);
     }
 
+    public static bool AreAnagrams(string str1, string str2)
+    {
+        // Step 1: Handle null or empty strings and different lengths
+        if (string.IsNullOrEmpty(str1) || string.IsNullOrEmpty(str2))
+        {
+            return false; // Or handle as per specific requirements (e.g., two empty strings are anagrams)
+        }
+
+        if (str1.Length != str2.Length)
+        {
+            return false;
+        }
+
+        // Step 2: Convert strings to character arrays and sort them
+        char[] charArray1 = str1.ToLower().ToCharArray(); // Convert to lowercase for case-insensitivity
+        char[] charArray2 = str2.ToLower().ToCharArray();
+
+        Array.Sort(charArray1);
+        Array.Sort(charArray2);
+
+        // Step 3: Compare the sorted character arrays
+        return new string(charArray1).Equals(new string(charArray2));
+    }
+
     private static bool Rearranged(string str1, string str2)
     {
+        if (string.IsNullOrEmpty(str1) || string.IsNullOrEmpty(str2))
+        {
+            return false; 
+        }
+
+        if (str1.Length != str2.Length)
+        {
+            return false;
+        }
+
         var str1Ordered = str1.ToLower().OrderBy(x => x).ToList();
         var str2Ordered = str2.ToLower().OrderBy(x => x).ToList();
+
         if (new string(str1Ordered.ToArray()) == new string(str2Ordered.ToArray()))
             return true;
         return false;

@@ -346,6 +346,8 @@ public class CoinChange
 
     public static int FindSecondHighestNumber(int[] nums)
     {
+        var second = nums.OrderBy(x => x).Reverse().ElementAt(1);
+
         if (nums.Length < 2)
         {
             throw new ArgumentException("Array should have at least two elements.");
@@ -544,6 +546,39 @@ public class CoinChange
 
         // All checks passed, the password is good
         return true;
+    }
+
+    //BY GOOGLE AI
+    public static List<int> FindPrimeFactorsByGoogle(int number)
+    {
+        List<int> primeFactors = new List<int>();
+
+        // Handle the factor of 2 separately for efficiency (allows loop to increment by 2 later)
+        while (number % 2 == 0)
+        {
+            primeFactors.Add(2);
+            number /= 2;
+        }
+
+        // Check for odd factors starting from 3 up to the square root of the remaining number
+        // (If a number has a factor larger than its square root, it must also have one smaller than its square root, 
+        // which would have already been found)
+        for (int i = 3; i <= Math.Sqrt(number); i += 2)
+        {
+            while (number % i == 0)
+            {
+                primeFactors.Add(i);
+                number /= i;
+            }
+        }
+
+        // If the remaining number is greater than 2, it is a prime factor itself
+        if (number > 2)
+        {
+            primeFactors.Add(number);
+        }
+
+        return primeFactors;
     }
 
     public static List<int> FindPrimeFactors(int number)
@@ -929,6 +964,14 @@ public class CoinChange
 
         Console.WriteLine("Prime factors of " + number + ":");
         foreach (int factor in primeFactors)
+        {
+            Console.Write(factor + " ");
+        }
+
+        List<int> primeFactorsByGoogle = FindPrimeFactorsByGoogle(number);
+
+        Console.WriteLine("Prime factors of " + number + ":");
+        foreach (int factor in primeFactorsByGoogle)
         {
             Console.Write(factor + " ");
         }

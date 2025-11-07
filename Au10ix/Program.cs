@@ -64,6 +64,7 @@ public class Investor
     }
 }
 
+/*
 class Program
 {
     static void Main()
@@ -86,7 +87,7 @@ class Program
         stock.PriceChanged -= investor2.Stock_PriceChanged;
     }
 }
-
+*/
 
 
 //using System.CodeDom.Compiler;

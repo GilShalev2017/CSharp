@@ -7,25 +7,26 @@ namespace General
     //ctrl + k + f // to indent
     internal class SingletonProgram
     {
-        
-        public class Singelton
+
+        public class Singleton
         {
-            private static Singelton _instance;
+            private static Singleton _instance;
 
             private static Object _synObject = new object();
 
-            public static Singelton SingeltonInstance
+            public static Singleton Instance
             {
-
                 get
                 {
-                    lock (_synObject)
+                    // First check (no lock) — fast path for already-created instance
+                    if (_instance == null)
                     {
-                        if (_instance == null)
+                        lock (_synObject)
                         {
-                            lock (_synObject)
+                            // Second check (with lock) — ensures only one thread creates the instance
+                            if (_instance == null)
                             {
-                                _instance = new Singelton();
+                                _instance = new Singleton();
                             }
                         }
                     }
@@ -33,17 +34,49 @@ namespace General
                 }
             }
 
-            protected Singelton()
+            protected Singleton()
             {
 
             }
-
         }
 
-        public class DerivedSingelton : Singelton
+        public class SingeltonLogger
+        {
+            private static SingeltonLogger _instance;
+            private static readonly object _lock = new();
+            private SingeltonLogger() { }
+            public static SingeltonLogger Instance
+            {
+                get
+                {
+                    if (_instance == null)
+                    {
+                        lock (_lock)
+                        {
+                            if (_instance == null)
+                                _instance = new SingeltonLogger();
+                        }
+                    }
+                    return _instance;
+                }
+            }
+            public void Log(string msg) => Console.WriteLine(msg);
+        }
+
+        public class DerivedSingleton : Singleton
         {
 
         }
+
+        //Simpler safer: use static ctor (implicit) and sealed !
+        public sealed class SimplerSaferSingleton
+        {
+            private static readonly SimplerSaferSingleton _instance = new SimplerSaferSingleton();
+            private SimplerSaferSingleton() { }
+
+            public static SimplerSaferSingleton Instance => _instance;
+        }
+
         /*
         static void Main(string[] args)
         {
