@@ -27,22 +27,13 @@
 
         public static Dictionary<string, Employee> GooglAIOldestAgeForEachCompany(List<Employee> employees)
         {
-            Dictionary<string, Employee> oldestAges = (Dictionary<string, Employee>)employees
-                .GroupBy(e => e.Company)
-                .Select(group => new
-                {
-                    Company = group.Key,
-                    OldestAge = group.Where(emp => emp.Age == group.Max(e => e.Age))
-                });
+            Dictionary<string, Employee> oldestAges = employees
+           .GroupBy(e => e.Company)
+           .Select(group => group.OrderByDescending(e => e.Age).FirstOrDefault()) // Select the single oldest employee from each group
+           .Where(e => e != null) // Filter out any potential nulls if groups were empty (though unlikely here)
+           .ToDictionary(e => e.Company, e => e); // Convert the result list into a Dictionary
+
             return oldestAges;
-
-           // Dictionary<string, Employee> oldestAges = employees
-           //.GroupBy(e => e.Company)
-           //.Select(group => group.OrderByDescending(e => e.Age).FirstOrDefault()) // Select the single oldest employee from each group
-           //.Where(e => e != null) // Filter out any potential nulls if groups were empty (though unlikely here)
-           //.ToDictionary(e => e.Company, e => e); // Convert the result list into a Dictionary
-
-           // return oldestAges;
         }
 
         public static Dictionary<string, int> AverageAgeForEachCompany(List<Employee> employees)
