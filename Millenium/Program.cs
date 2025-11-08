@@ -15,7 +15,7 @@ namespace Millenium
         static async Task Main(string[] args)
         {
             #region Tasks
-            
+
             // Call an asynchronous method and await the result
 
             //Here the await returns the result!
@@ -28,7 +28,8 @@ namespace Millenium
 
             MyCallerMethod();
 
-            Task<int> task = Task.Run(() => {
+            Task<int> task = Task.Run(() =>
+            {
                 // Perform some asynchronous operation
                 return 42; // Return a result of 42
             });
@@ -38,7 +39,7 @@ namespace Millenium
 
             // Obtain the result using the Result property
             int resultOfTask = task.Result;
-            
+
             Console.WriteLine("Result: " + resultOfTask); // Output: Result: 42
 
             #endregion Tasks
@@ -143,12 +144,12 @@ namespace Millenium
             {
                 max_ending_here = max_ending_here + arr[i];
 
-                if(max_so_far < max_ending_here)
+                if (max_so_far < max_ending_here)
                 {
                     max_so_far = max_ending_here;
                 }
 
-                if(max_ending_here < 0)
+                if (max_ending_here < 0)
                 {
                     max_ending_here = 0;
                 }
@@ -222,6 +223,35 @@ namespace Millenium
             return output.ToArray();
         }
 
+
+
+        // Enum to strictly define the possible statuses
+        public enum TodoStatus
+        {
+            Pending,
+            Completed
+        }
+
+        // Class to model a single todo item
+        public class TodoItem
+        {
+            public int Id { get; set; }
+
+            public int UserId { get; set; }
+
+            public string Title { get; set; }
+            public DateTimeOffset DueOn { get; set; }
+
+            public TodoStatus Status { get; set; }
+
+            // Optional: Override ToString for easier debugging/display
+            public override string ToString()
+            {
+                return $"Task ID: {Id}, Title: '{Title.Substring(0, Math.Min(Title.Length, 30))}...', Status: {Status}, Due: {DueOn.Date.ToShortDateString()}";
+            }
+        }
+
+
         static async Task<object[][]> GetTodosAsync()
         {
             // Create an instance of HttpClient
@@ -229,10 +259,12 @@ namespace Millenium
 
             // Call GetStringAsync asynchronously and await the result
             var result = await httpClient.GetAsync("https://gorest.co.in/public/v2/todos");
-            
+
             var jsonStringified = await result.Content.ReadAsStringAsync();
-          
+
             var data = JsonConvert.DeserializeObject<IEnumerable<IDictionary<string, object>>>(jsonStringified);
+
+            var data2 = JsonConvert.DeserializeObject<List<TodoItem>>(jsonStringified);
 
             var array = data.Select(d => d.Values.ToArray()).ToArray();
             // Return the result
@@ -242,7 +274,7 @@ namespace Millenium
         {
             // Asynchronous operation
             await Task.Delay(1); // Simulating an asynchronous delay of 1 second
-                                    // Code after await resumes executing once the asynchronous operation is complete
+                                 // Code after await resumes executing once the asynchronous operation is complete
         }
         static async void MyCallerMethod()
         {
