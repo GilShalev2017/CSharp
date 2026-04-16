@@ -65,9 +65,10 @@ class LRUCache<TKey, TValue>
         }
     }
 }
-
+/*
 class Program
 {
+    
     static void Main()
     {
         LRUCache<string, int> cache = new LRUCache<string, int>(3);
@@ -87,4 +88,6 @@ class Program
         Console.WriteLine(cache.Get("c")); // Output: 3
         Console.WriteLine(cache.Get("d")); // Output: 4
     }
+    
 }
+*/

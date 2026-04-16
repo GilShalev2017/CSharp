@@ -6,7 +6,7 @@ namespace General
 {
     internal class KomodorProgram
     {
-        /*
+       /*
         static void Main(string[] args)
         {
             var input = new string[] { "9000 app.komodor.com", "100 komodor.com", "100 google.com" };
@@ -54,6 +54,6 @@ namespace General
             output+= "]";
             Console.WriteLine(output);
         }
-        */
+       */ 
     }
 }

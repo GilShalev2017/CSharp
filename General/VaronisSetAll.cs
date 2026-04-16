@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-/*
+
 class ConstantTimeDataStructure<T>
 {
     private Dictionary<int, T> dictionary;
@@ -69,4 +69,3 @@ class Program
         Console.WriteLine(dataStructure.GetAll()); // Output: 100
     }
 }
-*/

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "HackerRankApp": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

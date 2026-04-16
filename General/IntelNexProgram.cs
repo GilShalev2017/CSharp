@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 namespace General
 {
     //ctrl + k + f // to indent
-    /*
+    
     internal class IntelNexProgram
     {
         static int FindMaxSubArray(int[] array)
         {
             int maxSum = int.MinValue;
+          
             int currentSum = 0;
 
             for (int i = 0; i < array.Length; i++)
@@ -32,7 +33,7 @@ namespace General
 
             return maxSum;
         }
-
+        /*
         static void Main(string[] args)
         {
             int[] array = new int[] { 1, 3, -5, 20, -40, 100, 5, 8, 10, -2, 12 };
@@ -40,6 +41,7 @@ namespace General
             Console.WriteLine("max sum is = " + FindMaxSubArray(array));
 
         }
+        */
     }
-    */
+    
 }

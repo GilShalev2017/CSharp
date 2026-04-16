@@ -651,45 +651,7 @@ internal class Program
         Console.WriteLine(bribes);
     }
 
-    static string isBalanced(string s)
-    {
-        List<char> openings = new List<char>();
-        foreach (char x in s)
-        {
-            if (x == '[' || x == '{' || x == '(')
-            {
-                openings.Add(x);
-            }
-            else if (x == ']')
-            {
-                if (openings[openings.Count() - 1] != '[')
-                {
-                    return "NO";
-                }
-                openings.RemoveAt(openings.Count() - 1);
-            }
-            else if (x == '}')
-            {
-                if (openings[openings.Count() - 1] != '{')
-                {
-                    return "NO";
-                }
-                openings.RemoveAt(openings.Count() - 1);
-            }
-            else if (x == ')')
-            {
-                if (openings[openings.Count() - 1] != '(')
-                {
-                    return "NO";
-                }
-                openings.RemoveAt(openings.Count() - 1);
-            }
-        }
-        if (openings.Count() == 0)
-            return "YES";
-
-        return "NO";
-    }
+   
 
     static string IsBalancedChatGPT(string s)
     {

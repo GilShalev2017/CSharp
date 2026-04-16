@@ -82,11 +82,13 @@ namespace LinqPractice
         //Find all the items that their price is greater than 10
         //Comment: can be done in several ways:
         //FindAll !!!
-        //Select + where statement !!!
+        //Select + Where statement + converting to List !!!
         //Use Where !
         public IEnumerable<Item>? PriceGreaterThan10()
         {
             var res = _itemList.FindAll(item => item.UnitPrice > 10.00M);
+
+            res = _itemList.Where(item => item.UnitPrice > 10.00M).Select(x => x).ToList();
 
             return res;
         }
@@ -124,6 +126,8 @@ namespace LinqPractice
             var res = from order in _orderList
                       select order;
 
+            res = _orderList.Select(x => x);
+
             return res;
         }
 
@@ -137,13 +141,22 @@ namespace LinqPractice
         //Find all the items that their price is equall or greater than 10 and display their names and price, convert them to list
         //Comment pay attention that we return an anonymous type, we use dynamic! and also we need to use new in order to decalre
         //that we create new objects!
-        public dynamic FindAllItemsWithPriceBiggerThan10()
+        public dynamic FindAllItemsWithPriceBiggerThan10_Dynamic()
         {
             dynamic res = _itemList.Where(item => item.UnitPrice >= 10)
                       .Select(item => new { item.ItemName, item.UnitPrice }).ToList();
 
             foreach (var element in res)
                 Console.WriteLine(element.ItemName + "-" + element.UnitPrice);
+
+            return res;
+        }
+        public IEnumerable<(string Name, decimal Price)> FindAllItemsWithPriceBiggerThan10_Tuple()
+        {
+            var res = _itemList
+                .Where(item => item.UnitPrice >= 10)
+                // Project into a ValueTuple with named elements
+                .Select(item => (Name: item.ItemName, Price: item.UnitPrice));
 
             return res;
         }
@@ -212,6 +225,9 @@ namespace LinqPractice
             var res = _itemList.Where(item => item.Category == "Entertainment").Select(elm => elm.ItemName)
                       .Concat(_itemList.Where(item => item.Category == "Food").Select(elm => elm.ItemName))
                       .Distinct();
+
+             res = _itemList.Where(item => item.Category == "Entertainment" || item.Category == "Food").Select(elm => elm.ItemName)
+                     .Distinct();
             return (IEnumerable<string>)res;
 
         }
@@ -229,6 +245,21 @@ namespace LinqPractice
         //Comment pay attention to the special syntax for creating a group by!
         public IOrderedEnumerable<IGrouping<string, Item>> GroupByCategory()
         {
+
+            var groupedByCategories = this._itemList.GroupBy(item => item.Category);
+
+            foreach (var group in groupedByCategories)
+            {
+                Console.WriteLine(group.Key);
+           
+                foreach (var item in group)
+                {
+                    Console.WriteLine(item);
+                }
+
+            }
+
+            //Another syntax
             var groupByCategory =
                     from item in _itemList
                     group item by item.Category into newGroup
@@ -272,7 +303,7 @@ namespace LinqPractice
         }
 
         //create a dictionary of the given array where the key is the ID
-        //Comment see the usage of ToDictionary - which expects a field to be served as a key!
+        //see the usage of ToDictionary - which expects a field to be served as a key!
         public Dictionary<int, Item> ConvertToDictionary()
         {
             //Dictionary<int, Item> dic = new Dictionary<int, Item>();

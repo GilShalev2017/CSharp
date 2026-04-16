@@ -20,7 +20,11 @@ tester.PrintStrings(orderNames);
 orders = tester.FindAllOrders();
 tester.PrintAllOrders(orders);
 
-var foundItems = tester.FindAllItemsWithPriceBiggerThan10();
+var foundItemsDynamic = tester.FindAllItemsWithPriceBiggerThan10_Dynamic();
+
+IEnumerable<(string Name, decimal Price)> foundItemsTuples = tester.FindAllItemsWithPriceBiggerThan10_Tuple();
+
+
 
 items = tester.FindGreaterThan10UsingWhere();
 tester.PrintAllItems(items);

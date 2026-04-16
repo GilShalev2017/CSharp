@@ -48,7 +48,7 @@ namespace General
                 {
                     Node newNode = new Node { Path = file, FileType = FileType.File };
 
-                    node.Children.Add(newNode);
+                   // node.Children.Add(newNode);
                 }
             }
         }
@@ -82,10 +82,10 @@ namespace General
                 }
             });
         }
-        /*
+         /*
         static void Main(string[] args)
         {
-            string path = @"C:\temp\TEST";
+            string path = @"C:\temp";
 
             Node root = new Node { Path = path, FileType = FileType.Folder};
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-/*
+
 class AboveDiagonalIterator<T> : IEnumerator<T>
 {
     private T[,] matrix;
@@ -47,6 +47,7 @@ class AboveDiagonalIterator<T> : IEnumerator<T>
     }
 }
 
+/*
 class Program
 {
     static void Main()
@@ -70,6 +71,7 @@ class Program
         return new AboveDiagonalEnumerable<T>(matrix);
     }
 }
+*/
 
 class AboveDiagonalEnumerable<T> : IEnumerable<T>
 {
@@ -90,4 +92,3 @@ class AboveDiagonalEnumerable<T> : IEnumerable<T>
         return GetEnumerator();
     }
 }
-*/

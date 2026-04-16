@@ -33,7 +33,8 @@ namespace Cider
         {
             Console.WriteLine("Hello World!");
 
-            root = new Node(@"C:\temp\TEST");
+            //root = new Node(@"C:\temp\TEST");
+            root = new Node(@"C:\temp");
 
             BuildTree(root);
         }

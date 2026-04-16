@@ -37,4 +37,5 @@ JWT is a compact, self-contained token format that is used for securely transmit
    - **JWT**: The JWT is issued by the authentication server and used directly by the client for authentication and authorization.
    - **OAuth**: OAuth involves exchanging an authorization code or grant for an access token, which is then used to access protected resources.
 
-In summary, JWT is a token format used for authentication and, to some extent, authorization. It provides a compact and self-contained way to convey user information. In contrast, OAuth is primarily an authorization framework that allows one application to access resources on behalf of a user, without sharing the user's credentials directly. While they serve different purposes, they can complement each other in scenarios where both authentication and resource access control are needed.
+In summary, JWT is a token format used for authentication and, to some extent, authorization. It provides a compact and self-contained way to convey user information. In contrast, OAuth is primarily an authorization framework that allows one application to access resources on behalf of a user, without sharing the user's credentials directly. 
+While they serve different purposes, they can complement each other in scenarios where both authentication and resource access control are needed.

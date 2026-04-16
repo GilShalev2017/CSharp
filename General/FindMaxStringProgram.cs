@@ -66,7 +66,7 @@ namespace General
             return max_len;
         }
 
-        static int FindMaxSubString(string input)
+        static int FindMaxSubStringLength(string input)
         {
             int maxLength = 0;
 
@@ -81,7 +81,9 @@ namespace General
                     if (!distinctList.Contains(input[j]))
                     {
                         counter++;
+                      
                         distinctList.Add(input[j]);
+                       
                         if (counter > maxLength)
                         {
                             maxLength = counter;
@@ -100,17 +102,49 @@ namespace General
 
             return maxLength;
         }
+
+        static int ChatFindMaxSubStringLength(string input)
+        {
+            if (string.IsNullOrEmpty(input)) return 0;
+
+            HashSet<char> set = new HashSet<char>();
+            int maxLength = 0, left = 0;
+
+            for (int right = 0; right < input.Length; right++)
+            {
+                // If duplicate found, remove characters from the left
+                while (set.Contains(input[right]))
+                {
+                    set.Remove(input[left]);
+                    left++;
+                }
+
+                // Add the current character and update max length
+                set.Add(input[right]);
+                maxLength = Math.Max(maxLength, right - left + 1);
+            }
+
+            return maxLength;
+        }
         /*
         static void Main(string[] args)
         {
             int ress = without_repeated_chars_longest_substring("abcabbd");// pickoutthelongestsubstring");
-            int myRes = my_without_repeated_chars_longest_substring("pickoutthelongestsubstring"); 
-            int res5 = FindMaxSubString("pwwkew");// pickoutthelongestsubstring");// 8
-            int res0 = FindMaxSubString("abc");// 3
-            int res1 = FindMaxSubString("abcabcbb"); //3
-            int res2 = FindMaxSubString("bbbbb");//1
-            int res3 = FindMaxSubString("pwwkew");//3
-            int res4 = FindMaxSubString("abcad");//4
-        }*/
+            int myRes = my_without_repeated_chars_longest_substring("pickoutthelongestsubstring");
+            int res5 = FindMaxSubStringLength("pwwkew");//3 pickoutthelongestsubstring");// 8
+            int res0 = FindMaxSubStringLength("abc");// 3
+            int res1 = FindMaxSubStringLength("abcabcbb"); //3
+            int res2 = FindMaxSubStringLength("bbbbb");//1
+            int res3 = FindMaxSubStringLength("pwwkew");//3
+            int res4 = FindMaxSubStringLength("abcad");//4
+
+            int res55 = ChatFindMaxSubStringLength("pwwkew");//3 pickoutthelongestsubstring");// 8
+            int res00 = ChatFindMaxSubStringLength("abc");// 3
+            int res11 = ChatFindMaxSubStringLength("abcabcbb"); //3
+            int res22 = ChatFindMaxSubStringLength("bbbbb");//1
+            int res33 = ChatFindMaxSubStringLength("pwwkew");//3
+            int res44 = ChatFindMaxSubStringLength("abcad");//4
+        }
+        */
     }
 }
