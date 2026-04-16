@@ -171,6 +171,7 @@ class Solution
        return max;
     }
 
+ 
     public static void Main()
     {
         //1). Singelton
@@ -281,8 +282,7 @@ class Solution
         items = tester.FindCheapestThan50NIS();
         tester.PrintAllItems(items);
         //7).Data Strcture Quizes
-        int[] array = { 1, 3, -5, 20, -40, 100, 5, 8, 10, -2, 12 };
+        int[] array = [-2, 1, -3, 4, -1, 2, 1, -5, 4];
         Console.WriteLine("max sum is = " + FindMaxSubArray(array));
-
     }
 }
