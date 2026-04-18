@@ -45,9 +45,10 @@ class ConstantTimeDataStructure<T>
         return setAllValue;
     }
 }
-
+/*
 class Program
 {
+  
     static void Main()
     {
         ConstantTimeDataStructure<int> dataStructure = new ConstantTimeDataStructure<int>();
@@ -68,4 +69,6 @@ class Program
 
         Console.WriteLine(dataStructure.GetAll()); // Output: 100
     }
+    
 }
+*/

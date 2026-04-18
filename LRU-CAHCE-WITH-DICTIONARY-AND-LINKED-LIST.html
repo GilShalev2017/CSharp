@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DS_TYPES_AND_TECHNIQUES</title>
+  <style>
+  @import url("https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-alpha2/katex.min.css");
+
+  body {
+    font-family: Georgia, Cambria, serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #373D49;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+  }
+  h1 { font-size: 2em; }
+  h2 { font-size: 1.5em; }
+  h3 { font-size: 1.25em; }
+  a { color: #35D7BB; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code {
+    font-family: "Ubuntu Mono", Monaco, monospace;
+    background: #F5F7FA;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+  }
+  pre {
+    background: #F5F7FA;
+    padding: 1em;
+    border-radius: 3px;
+    overflow-x: auto;
+  }
+  .hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 0;
+    color: #333;
+  }
+  pre code { background: none; padding: 0; }
+  blockquote {
+    border-left: 3px solid #A0AABF;
+    padding-left: 1em;
+    margin-left: 0;
+    font-style: italic;
+    color: #666;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th, td {
+    border: 1px solid #E8E8E8;
+    padding: 0.5em;
+    text-align: left;
+  }
+  th {
+    background: #F5F7FA;
+    font-weight: 600;
+  }
+  #preview .table {
+    width: auto;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  .katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+</style>
+</head>
+<body id="preview">
+<h2 class="code-line has-line-data" data-line-start="0" data-line-end="1"><a id="LRU_Cache_Explanation_0"></a>LRU Cache Explanation</h2>
+<h3 class="code-line has-line-data" data-line-start="2" data-line-end="3"><a id="Why_both_a_Dictionary_AND_a_LinkedList_2"></a>Why both a Dictionary AND a LinkedList?</h3>
+<p class="has-line-data" data-line-start="4" data-line-end="5">Each structure solves a different problem — you need <strong>both</strong> together:</p>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th>Structure</th>
+<th>Purpose</th>
+<th>Operation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Dictionary</code></td>
+<td>Look up a node by key</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td><code>LinkedList</code></td>
+<td>Track usage order (most → least recent)</td>
+<td>O(1) move to front</td>
+</tr>
+</tbody>
+</table>
+<p class="has-line-data" data-line-start="11" data-line-end="12"><strong>The key insight:</strong> The dictionary stores direct references to the <code>LinkedListNode</code>, not just the value. This is the clever part.</p>
+<ul>
+<li class="has-line-data" data-line-start="13" data-line-end="14">Without the dictionary: to find a key in the linked list you’d have to scan it — <strong>O(n)</strong></li>
+<li class="has-line-data" data-line-start="14" data-line-end="15">Without the linked list: you’d have no way to efficiently track which item is “least recently used”</li>
+<li class="has-line-data" data-line-start="15" data-line-end="17"><strong>Together:</strong> you can find any node instantly via the dictionary, then move it in the linked list in O(1)</li>
+</ul>
+<p class="has-line-data" data-line-start="17" data-line-end="18">Here’s what memory looks like after <code>Set(&quot;a&quot;,1), Set(&quot;b&quot;,2), Set(&quot;c&quot;,3)</code>:</p>
+<pre><code class="has-line-data" data-line-start="19" data-line-end="24">Dictionary:          LinkedList (most → least recent):
+&quot;c&quot; → [ref] ──────► [c,3] ↔ [b,2] ↔ [a,1]
+&quot;b&quot; → [ref] ──────────────────►↗
+&quot;a&quot; → [ref] ──────────────────────────►↗
+</code></pre>
+<hr>
+<h3 class="code-line has-line-data" data-line-start="27" data-line-end="28"><a id="What_is_return_defaultTValue_27"></a>What is <code>return default(TValue)</code>?</h3>
+<p class="has-line-data" data-line-start="29" data-line-end="30">It returns the <strong>default zero-value</strong> for whatever type <code>TValue</code> is — it’s how C# handles “nothing to return” in a generic method.</p>
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+<th><code>TValue</code> type</th>
+<th><code>default(TValue)</code> returns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>int</code></td>
+<td><code>0</code></td>
+</tr>
+<tr>
+<td><code>bool</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>string</code></td>
+<td><code>null</code></td>
+</tr>
+<tr>
+<td><code>object</code></td>
+<td><code>null</code></td>
+</tr>
+<tr>
+<td>A struct</td>
+<td>All fields zeroed</td>
+</tr>
+</tbody>
+</table>
+<p class="has-line-data" data-line-start="39" data-line-end="40">This is why in the example <code>cache.Get(&quot;a&quot;)</code> after eviction prints <code>0</code> — the cache is <code>LRUCache&lt;string, int&gt;</code>, so <code>default(int)</code> is <code>0</code>, signaling “key not found.” It’s essentially the generic equivalent of returning <code>null</code>, but safe for value types like <code>int</code> which can’t be <code>null</code>.</p>
+<blockquote>
+<p class="has-line-data" data-line-start="41" data-line-end="42">In modern C# you can also write just <code>default</code> instead of <code>default(TValue)</code> — they’re identical.</p>
+</blockquote>
+
+</body>
+</html>

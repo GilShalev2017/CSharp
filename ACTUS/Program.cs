@@ -55,7 +55,7 @@ class Program
                 if (!visited[newRow, newColumn])
                 {
                     if (DFS(newRow, newColumn))
-                        return true;
+                        return true; //we exit here the foor loop since we found a way
                 }
             }
 

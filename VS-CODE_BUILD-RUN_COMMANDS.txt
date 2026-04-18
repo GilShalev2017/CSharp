@@ -1,0 +1,21 @@
+BUILD THE PROJECT:
+dotnet build HpIndigo\HpIndigo.csproj 
+
+RUN THE PROJECT:
+dotnet run --project HpIndigo\HpIndigo.csproj
+
+# Individual projects that work
+dotnet run --project CSharpCodility\CSharpCodility.csproj
+dotnet run --project ACTUS\ACTUS.csproj
+dotnet run --project HpIndigo\HpIndigo.csproj
+
+# Entire solution (fix HpIndigo errors first)
+dotnet build CSharpCodility.sln
+
+# Clean and rebuild
+dotnet clean CSharpCodility.sln
+dotnet build CSharpCodility.sln --no-restore
+
+# Different configurations
+dotnet build CSharpCodility.sln --configuration Release
+dotnet build CSharpCodility.sln --verbosity detailed

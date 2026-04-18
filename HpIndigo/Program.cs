@@ -3,10 +3,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 internal class Program
 {
@@ -37,7 +39,7 @@ internal class Program
         return false;
     }
 
-    static int LongestUniqueSubstring(string input)
+    static int BruteForceLengthOfLongestSubstring(string input)
     {
         int maxString = 0;
 
@@ -59,8 +61,51 @@ internal class Program
 
         return maxString;
     }
+    static int SlidingWindowLengthOfLongestSubstrings2(string s)
+    {
+        var set = new HashSet<char>();
+        int left = 0;
+        int maxString = 0;
+        for(int right=0; right<s.Length; right++)
+        {
+            while (set.Contains(s[right]))
+            {
+                set.Remove(s[left]);
+                left++;
+            }
+            set.Add(s[right]);
+            maxString = Math.Max(maxString, set.Count);
+        }
+        return maxString;
+    }
 
-    static int LengthOfLongestSubstring(string s)
+    static int MySlidingWindowLengthOfLongestSubstring(string s)
+    {
+        var set = new HashSet<char>();
+        var maxLength = 0;
+        int left = 0;
+
+        for (int right=0; right < s.Length; right++)
+        {
+            if (!set.Contains(s[right]))
+            {
+                set.Add(s[right]);
+                maxLength = Math.Max(maxLength, set.Count);
+            }
+            else
+            {
+                while (set.Contains(s[left]))
+                {
+                    set.Remove(s[left]);
+                    left++;
+                }
+                set.Add(s[right]);
+            }
+        }
+
+        return maxLength;
+    }
+    static int SlidingWindowLengthOfLongestSubstring(string s)
     {
         var set = new HashSet<char>();
         int left = 0;
@@ -194,6 +239,99 @@ internal class Program
         return (maxClicks, maxUser);
     }
 
+    /*
+    Given an array of integers nums and an integer k, determine if there are two distinct indices i and j such that:
+
+    nums[i] == nums[j]
+    and |i - j| <= k
+
+    Return true if such indices exist, otherwise false.
+    */
+    static bool SameNumsAtKDistance(int[]nums, int k)
+    {
+        var dictionary = new Dictionary<int, int>(); //key=num, value=index
+       
+        for(int i=0; i < nums.Length; i++)
+        {
+            var currentNum = nums[i];
+            
+            if(!dictionary.ContainsKey(currentNum))
+            {
+                dictionary[currentNum] = i;
+            }
+            else  //exist
+            {
+                if (Math.Abs(dictionary[currentNum] - i) <= k)
+                {
+                    return true;
+                }
+                dictionary[currentNum] = i;
+            }
+        }
+        return false;
+    }
+
+    static int KadenAlgorithm(int[] array)
+    {
+        int maxSum = int.MinValue;
+        int currentSum = 0;
+
+        for (int i = 0; i < array.Length; i++)
+        {
+            currentSum += array[i];
+           
+            if (currentSum > maxSum)
+            {
+                maxSum = currentSum;  // ← capture before reset
+            }
+           
+            if (currentSum < 0)
+            {
+                currentSum = 0;       // ← reset after
+            }
+        }
+        return maxSum;
+    }
+    /*
+    HashSet<int> visited = new HashSet<int>();
+    void DFSRecurrsive(int node)
+    {
+
+        if (visited.Contains(node))
+            return;
+
+        visited.Add(node);
+
+        foreach (var neighbor in graph[node])
+        {
+            DFSRecurrsive(neighbor);
+        }
+    }
+    void DFSIterative(int node)
+    {
+        var stack = new Stack<int>();
+       
+        stack.Push(start);
+
+        var visited = new HashSet<int>();
+
+        while (stack.Count > 0)
+        {
+            var node = stack.Pop();
+
+            if (visited.Contains(node))
+                continue;
+
+            visited.Add(node);
+
+            foreach (var neighbor in graph[node])
+            {
+                stack.Push(neighbor);
+            }
+        }
+    }
+    */
+
     private static void Main(string[] args)
     {
         Console.WriteLine("Hello, World!");
@@ -208,19 +346,20 @@ internal class Program
         Console.WriteLine("Duplicate Exist=" + ContainsDuplicate(nums).ToString());
         Console.WriteLine("Faster Duplicate Exist=" + ContainsDuplicateSorted(nums).ToString());
 
- 
-        string input = "abcabcdebb";
 
-        Console.WriteLine(
-            "Longest Unique String for " + input + " = " + LongestUniqueSubstring(input)
-        );
+        Console.WriteLine("Longest Unique String for abcabcbb " + BruteForceLengthOfLongestSubstring("abcabcbb"));
 
-        Console.WriteLine(
-            "Longest LengthOfLongestSubstring for "
-                + input
-                + " = "
-                + LengthOfLongestSubstring(input)
-        );
+        Console.WriteLine("Longest Substring for \"abcabcbb\" " + SlidingWindowLengthOfLongestSubstring("abcabcbb"));
+        Console.WriteLine("Longest Substring for \"bbbbb\" " + SlidingWindowLengthOfLongestSubstring("bbbbb"));
+        Console.WriteLine("Longest Substring for \"pwwkew\" " + SlidingWindowLengthOfLongestSubstring("pwwkew"));
+
+        Console.WriteLine("Longest Substring for \"abcabcbb\" " + MySlidingWindowLengthOfLongestSubstring("abcabcbb"));
+        Console.WriteLine("Longest Substring for \"bbbbb\" " + MySlidingWindowLengthOfLongestSubstring("bbbbb"));
+        Console.WriteLine("Longest Substring for \"pwwkew\" " + MySlidingWindowLengthOfLongestSubstring("pwwkew"));
+
+        Console.WriteLine("Longest Substring for \"abcabcbb\" " + SlidingWindowLengthOfLongestSubstrings2("abcabcbb"));
+        Console.WriteLine("Longest Substring for \"bbbbb\" " + SlidingWindowLengthOfLongestSubstrings2("bbbbb"));
+        Console.WriteLine("Longest Substring for \"pwwkew\" " + SlidingWindowLengthOfLongestSubstrings2("pwwkew"));
 
         int n = 3;
         var edges = new int[][] { [0, 1], [1, 2] };
@@ -308,5 +447,9 @@ internal class Program
 
             update answer
         */
+        Console.WriteLine($"For This array is same numbers exist in K distance" + SameNumsAtKDistance([1, 2, 3, 1], 3));
+        Console.WriteLine($"For This array is exist in K distance" + SameNumsAtKDistance([1, 2, 3, 1], 2));
+
+        Console.WriteLine("Max Number in array is " + KadenAlgorithm([-2, 1, -3, 4, -1, 2, 1, -5, 4]));
     }
 }
