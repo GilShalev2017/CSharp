@@ -110,7 +110,8 @@ namespace Monday
 }
 
 /*
-This C# code defines a system for managing users, teams, and notifications. The primary goal of the code is to process mentions (of both individual users and entire teams) in a message update and then notify all relevant users without sending duplicate messages to anyone.
+This C# code defines a system for managing users, teams, and notifications. The primary goal of the code is to process mentions 
+(of both individual users and entire teams) in a message update and then notify all relevant users without sending duplicate messages to anyone.
 Here is a step-by-step explanation of what the code does:
 1.Data Structures and Initial Setup
 The code defines three main classes:
@@ -118,7 +119,8 @@ User: Represents an individual user with an id, name, and an array of teams they
 Mention: Represents a reference within a message, specifying if it's a "user" or "team" type and its corresponding id.
 Two static dictionaries hold the program's data:
 users: A lookup table where the key is the User ID and the value is the User object itself. This starts populated with 4 example users.
-teamUsers: This dictionary is initially empty. It's intended to store the reverse relationship: Key = Team ID, Value = A List of User IDs who belong to that team.
+teamUsers: This dictionary is initially empty. It's intended to store the reverse relationship: Key = Team ID, Value = A List of User IDs 
+who belong to that team.
 2. The Initial Data Processing (Main method)
 The Main method is the entry point of the program. Its first action is to populate the teamUsers dictionary:
 It iterates through all User objects present in the users dictionary.
@@ -137,8 +139,10 @@ User with ID 2
 Team with ID 3
 Processing Mentions: It iterates through the array of mentions:
 If the mention type is "user", the user's ID is added directly to a temporary userIds list.
-If the mention type is "team", it looks up that teamId in the teamUsers dictionary (which was populated in Main) and adds every user ID in that team's list to the temporary userIds list.
-Removing Duplicates: The crucial step here is userIds.Select(x => x).Distinct().ToArray(). This ensures that even if a user is mentioned individually and is a member of a mentioned team (e.g., User 1 is in Team 3), they only appear once in the final list of recipients.
+If the mention type is "team", it looks up that teamId in the teamUsers dictionary (which was populated in Main) and adds every user ID in that team's
+list to the temporary userIds list.
+Removing Duplicates: The crucial step here is userIds.Select(x => x).Distinct().ToArray(). This ensures that even if a user is mentioned individually
+and is a member of a mentioned team (e.g., User 1 is in Team 3), they only appear once in the final list of recipients.
 Notify(...): The unique list of recipient IDs and the message (update, which is null in this run) are passed to the Notify function.
 Notify(int[] userIds, string message)
 This function handles the actual output/sending of the message.
