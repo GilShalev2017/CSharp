@@ -370,14 +370,7 @@ internal class Program
             "Is Source and Destination Connected = " + ValidPath(n, edges, source, destination)
         );
 
-        edges = new int[][]
-        {
-            new int[] { 0, 1 },
-            new int[] { 1, 2 },
-            new int[] { 2, 3 },
-            new int[] { 4, 5 },
-            new int[] { 5, 6 },
-        };
+        edges = new int[][] { [0, 1], [1, 2], [2, 3], [4, 5], [5, 6] };
         n = 7;
         source = 0;
         destination = 6;

@@ -25,7 +25,6 @@ var foundItemsDynamic = tester.FindAllItemsWithPriceBiggerThan10_Dynamic();
 IEnumerable<(string Name, decimal Price)> foundItemsTuples = tester.FindAllItemsWithPriceBiggerThan10_Tuple();
 
 
-
 items = tester.FindGreaterThan10UsingWhere();
 tester.PrintAllItems(items);
 

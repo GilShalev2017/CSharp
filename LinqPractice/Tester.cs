@@ -151,6 +151,7 @@ namespace LinqPractice
 
             return res;
         }
+
         public IEnumerable<(string Name, decimal Price)> FindAllItemsWithPriceBiggerThan10_Tuple()
         {
             var res = _itemList
@@ -176,7 +177,7 @@ namespace LinqPractice
             return res;
         }
 
-        //Sort all the items by their price in DESC order and skip the first most expensive one
+        //Sort all the items by their price in DESC order and skip the first 2 most expensive ones
         public IEnumerable<Item> SortByPriceAndSkipFirst2MostExpensive()
         {
             var res = _itemList.OrderByDescending(item => item.UnitPrice).Skip(2);//or skipo(1)?
@@ -218,7 +219,7 @@ namespace LinqPractice
         //Find all the items that belong to categories "Entertainment" & "Food" and show them only once!
         //Comment: in oredr not to mix the items of the 2 categories we find the 2 lists (and take only ItemName and not the entire Item fields
         //by using a Select) and then we call a Conact between them!
-        //Distinct is not really needed here !!!
+        //Distinct is not really needed here !!! unless same item appears in both ???
         public IEnumerable<string> FindEntertainmentAndFoodItems()
         {
             //var res = _itemList.Where(item => item.Category == "Entertainment" || item.Category == "Food");
