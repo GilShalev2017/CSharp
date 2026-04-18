@@ -21,7 +21,7 @@ namespace Millenium
             //Here the await returns the result!
             var resultWeb = await GetTodosAsync();
 
-            //Here we don't await/wait on the task but the Result is blocking until we get a result.
+            //Here we don't await/wait on the task but the Result is blocking the thread !!! (bad approach!!!) until we get a result.
             var resultWeb2 = GetTodosAsync().Result;
 
             Console.WriteLine("Web returned {0} records", resultWeb.Length);
