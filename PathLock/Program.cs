@@ -114,7 +114,7 @@ internal class Program
     {
         private readonly TrieNode _root = new();
 
-        // Insert — O(m)
+        // Insert — O(m), also increments Count at each node for prefix counting
         public void Insert(string word)
         {
             var node = _root;
@@ -123,6 +123,7 @@ internal class Program
                 if (!node.Children.ContainsKey(ch))
                     node.Children[ch] = new TrieNode();
                 node = node.Children[ch];
+                node.Count++; // tracks how many words pass through this node
             }
             node.IsEnd = true;
         }
@@ -137,7 +138,7 @@ internal class Program
                     return false;
                 node = node.Children[ch];
             }
-            return node.IsEnd; // must reach end!
+            return node.IsEnd;
         }
 
         // Prefix check — O(m)
@@ -150,7 +151,69 @@ internal class Program
                     return false;
                 node = node.Children[ch];
             }
-            return true; // any node is fine
+            return true;
+        }
+
+        // 1. Return all words with a given prefix (DFS)
+        public List<string> GetWordsWithPrefix(string prefix)
+        {
+            var result = new List<string>();
+            var node = _root;
+            foreach (var ch in prefix)
+            {
+                if (!node.Children.ContainsKey(ch))
+                    return result;
+                node = node.Children[ch];
+            }
+            DFS(node, new StringBuilder(prefix), result);
+            return result;
+        }
+
+        private void DFS(TrieNode node, StringBuilder current, List<string> result)
+        {
+            if (node.IsEnd)
+                result.Add(current.ToString());
+            foreach (var (ch, child) in node.Children)
+            {
+                current.Append(ch);
+                DFS(child, current, result);
+                current.Remove(current.Length - 1, 1); // backtrack
+            }
+        }
+
+        // 2. Count words starting with prefix — O(m)
+        public int CountWordsWithPrefix(string prefix)
+        {
+            var node = _root;
+            foreach (var ch in prefix)
+            {
+                if (!node.Children.ContainsKey(ch))
+                    return 0;
+                node = node.Children[ch];
+            }
+            return node.Count;
+        }
+
+        // 3. Delete a word — sets IsEnd=false, cleans up empty nodes
+        public bool Delete(string word)
+        {
+            return DeleteHelper(_root, word, 0);
+        }
+
+        private bool DeleteHelper(TrieNode node, string word, int depth)
+        {
+            if (depth == word.Length)
+            {
+                if (!node.IsEnd) return false;
+                node.IsEnd = false;
+                return node.Children.Count == 0;
+            }
+            var ch = word[depth];
+            if (!node.Children.ContainsKey(ch)) return false;
+            bool shouldDelete = DeleteHelper(node.Children[ch], word, depth + 1);
+            if (shouldDelete)
+                node.Children.Remove(ch);
+            return shouldDelete && node.Children.Count == 0 && !node.IsEnd;
         }
     }
 
@@ -930,134 +993,50 @@ internal class Program
         Console.WriteLine(minStack.GetMin()); // 5 — back to original
 
         Console.WriteLine(minStack.Top());    // 5 — top of stack
-    #endregion Part 5 — Stacks & Queues
+        #endregion Part 5 — Stacks & Queues
 
-    #region Part 7 — Trie (Dictionary / Prefix Tree)
-    //// ─── Setup ───────────────────────────────────────────────
-    //var trie = new Trie();
-    //trie.Insert("app");
-    //trie.Insert("apple");
-    //trie.Insert("application");
-    //trie.Insert("apt");
-    //trie.Insert("bat");
-    //trie.Insert("ball");
+        #region Part 7 — Trie (Dictionary / Prefix Tree)
 
-    //// ─── Basic Search ────────────────────────────────────────
-    //Console.WriteLine(trie.Search("app"));         // True  — inserted directly
-    //Console.WriteLine(trie.Search("apple"));       // True
-    //Console.WriteLine(trie.Search("ap"));          // False — never inserted, only a prefix
-    //Console.WriteLine(trie.StartsWith("ap"));      // True  — valid prefix
-    //Console.WriteLine(trie.StartsWith("xyz"));     // False
+        var trie = new Trie();
+        trie.Insert("app");
+        trie.Insert("apple");
+        trie.Insert("application");
+        trie.Insert("apt");
+        trie.Insert("bat");
+        trie.Insert("ball");
 
-    //// ─── 1. Return all words with a given prefix (DFS) ───────
-    //// Traverse to the prefix node, then DFS to collect all IsEnd nodes
-    //List<string> GetWordsWithPrefix(string prefix)
-    //{
-    //    var result = new List<string>();
-    //    var node = _root; // start from root
-    //                      // walk to the end of the prefix
-    //    foreach (var ch in prefix)
-    //    {
-    //        if (!node.Children.ContainsKey(ch))
-    //            return result; // prefix not found
-    //        node = node.Children[ch];
-    //    }
-    //    // DFS from the prefix node, carrying the current word built so far
-    //    DFS(node, new StringBuilder(prefix), result);
-    //    return result;
-    //}
+        // Basic Search
+        Console.WriteLine(trie.Search("app"));        // True
+        Console.WriteLine(trie.Search("apple"));      // True
+        Console.WriteLine(trie.Search("ap"));         // False
+        Console.WriteLine(trie.StartsWith("ap"));     // True
+        Console.WriteLine(trie.StartsWith("xyz"));    // False
 
-    //void DFS(TrieNode node, StringBuilder current, List<string> result)
-    //{
-    //    if (node.IsEnd)
-    //        result.Add(current.ToString()); // found a complete word
-    //    foreach (var (ch, child) in node.Children)
-    //    {
-    //        current.Append(ch);
-    //        DFS(child, current, result);
-    //        current.Remove(current.Length - 1, 1); // backtrack
-    //    }
-    //}
+        // 1. All words with prefix
+        var words1 = trie.GetWordsWithPrefix("app");
+        Console.WriteLine(string.Join(", ", words1)); // app, apple, application
 
-    //var words1 = GetWordsWithPrefix("app");
-    //Console.WriteLine(string.Join(", ", words1)); // app, apple, application
+        // 2. Count words with prefix
+        Console.WriteLine(trie.CountWordsWithPrefix("app")); // 3
+        Console.WriteLine(trie.CountWordsWithPrefix("apt")); // 1
+        Console.WriteLine(trie.CountWordsWithPrefix("ba"));  // 2
 
-    //// ─── 2. Count words starting with prefix ─────────────────
-    //// Store a Count at each node, increment on every Insert pass-through
-    //// Modified TrieNode:
+        // 3. Delete
+        Console.WriteLine(trie.Search("apple")); // True
+        trie.Delete("apple");
+        Console.WriteLine(trie.Search("apple")); // False
+        Console.WriteLine(trie.Search("app"));   // True
 
+        // 4. Autocomplete
+        var autoTrie = new Trie();
+        foreach (var w in new[] { "car", "card", "care", "careful", "cat", "dog" })
+            autoTrie.Insert(w);
+        var suggestions = autoTrie.GetWordsWithPrefix("car");
+        Console.WriteLine(string.Join(", ", suggestions)); // car, card, care, careful
 
-    //// Modified Insert:
-    //public void Insert(string word)
-    //{
-    //    var node = _root;
-    //    foreach (var ch in word)
-    //    {
-    //        if (!node.Children.ContainsKey(ch))
-    //            node.Children[ch] = new TrieNode();
-    //        node = node.Children[ch];
-    //        node.Count++; // increment every node we pass through
-    //    }
-    //    node.IsEnd = true;
-    //}
+        #endregion Part 7 — Trie (Dictionary / Prefix Tree)
 
-    //// Count is then just:
-    //int CountWordsWithPrefix(string prefix)
-    //{
-    //    var node = _root;
-    //    foreach (var ch in prefix)
-    //    {
-    //        if (!node.Children.ContainsKey(ch))
-    //            return 0;
-    //        node = node.Children[ch];
-    //    }
-    //    return node.Count; // already tracked!
-    //}
-
-    //Console.WriteLine(CountWordsWithPrefix("app")); // 3 (app, apple, application)
-    //Console.WriteLine(CountWordsWithPrefix("apt")); // 1
-    //Console.WriteLine(CountWordsWithPrefix("ba"));  // 2 (bat, ball)
-
-    //// ─── 3. Delete a word ────────────────────────────────────
-    //// Set IsEnd=false, then clean up empty nodes on the way back (recursively)
-    //bool Delete(string word)
-    //{
-    //    return DeleteHelper(_root, word, 0);
-    //}
-
-    //bool DeleteHelper(TrieNode node, string word, int depth)
-    //{
-    //    if (depth == word.Length)
-    //    {
-    //        if (!node.IsEnd) return false; // word doesn't exist
-    //        node.IsEnd = false;
-    //        return node.Children.Count == 0; // true = safe to delete this node
-    //    }
-    //    var ch = word[depth];
-    //    if (!node.Children.ContainsKey(ch)) return false;
-    //    bool shouldDelete = DeleteHelper(node.Children[ch], word, depth + 1);
-    //    if (shouldDelete)
-    //        node.Children.Remove(ch); // clean up empty node
-    //    return shouldDelete && node.Children.Count == 0 && !node.IsEnd;
-    //}
-
-    //trie.Insert("apple");
-    //trie.Insert("app");
-    //Console.WriteLine(trie.Search("apple")); // True
-    //Delete("apple");
-    //Console.WriteLine(trie.Search("apple")); // False
-    //Console.WriteLine(trie.Search("app"));   // True  — shared nodes preserved!
-
-    //// ─── 4. Autocomplete ─────────────────────────────────────
-    //var autoTrie = new Trie();
-    //foreach (var w in new[] { "car", "card", "care", "careful", "cat", "dog" })
-    //    autoTrie.Insert(w);
-
-    //var suggestions = GetWordsWithPrefix("car"); // reuses DFS from above
-    //Console.WriteLine(string.Join(", ", suggestions)); // car, card, care, careful
-    #endregion Part 7 — Trie (Dictionary / Prefix Tree)
-
-    #region Part 8 — Coin Change &Dynamic Programming
+        #region Part 8 — Coin Change &Dynamic Programming
         /*
 
         Initial: dp = [1, 0, 0, 0]
