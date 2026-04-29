@@ -11,11 +11,13 @@ using System.Net;
 using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.ExceptionServices;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -735,5 +737,70 @@ internal class Program
         // Null — returns null
         Console.WriteLine(PrintList(ReverseListIterative(null))); // (empty)
         #endregion Part 4 — Linked Lists
+
+        #region Part 5 — Stacks & Queues
+
+        //Valid Parentheses
+        //Appears in almost every company.
+        //Push opens, pop and check on close.
+
+        bool IsValid(string expression)
+        {
+            if (string.IsNullOrEmpty(expression))
+                return true;
+
+            var stack = new Stack<char>();
+
+            foreach (char c in expression)
+            {
+                if (c == '(' || c == '[' || c == '{')
+                {
+                    stack.Push(c);
+                }
+                else if (c == ')' || c == ']' || c == '}')
+                {
+                    if (stack.Count == 0)
+                        return false;
+
+                    char popped = stack.Pop();
+                    if ((c == ')' && popped != '(') ||
+                        (c == ']' && popped != '[') ||
+                        (c == '}' && popped != '{'))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return stack.Count == 0;
+        }
+
+        // Valid — simple pairs
+        Console.WriteLine(IsValid("()"));       // True
+        Console.WriteLine(IsValid("[]"));       // True
+        Console.WriteLine(IsValid("{}"));       // True
+
+        // Valid — nested
+        Console.WriteLine(IsValid("()[]{}"));   // True
+        Console.WriteLine(IsValid("{[()]}"));   // True
+
+        // Invalid — wrong closing order
+        Console.WriteLine(IsValid("(]"));       // False
+        Console.WriteLine(IsValid("([)]"));     // False
+
+        // Invalid — unclosed bracket
+        Console.WriteLine(IsValid("("));        // False
+        Console.WriteLine(IsValid("([]"));      // False
+
+        // Invalid — closing with empty stack
+        Console.WriteLine(IsValid(")"));        // False
+        Console.WriteLine(IsValid("}{"));       // False
+
+        // Empty string — valid (nothing to mismatch)
+        Console.WriteLine(IsValid(""));         // True
+
+        //Min Stack — GetMin in O(1)
+        //Maintain a parallel minStack that tracks the running minimum at every level.
+
+        #endregion Part 5 — Stacks & Queues
     }
 }
