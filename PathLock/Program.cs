@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.ExceptionServices;
+using System.Runtime.Intrinsics.Arm;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -46,6 +47,110 @@ internal class Program
         {
             Val = val;
             Next = next;
+        }
+    }
+
+    // Min Stack — All operations O(1): Push, Pop, Top, GetMin
+    //
+    // The trick: maintain two same-size stacks in parallel.
+    // _stack = regular stack
+    // _min   = at every level, stores the minimum value seen SO FAR up to that depth
+    //
+    // Dry run with Push(5), Push(3), Push(7), Push(2):
+    //
+    //          _stack      _min
+    // Push(5): [5]         [5]       ← min so far = 5
+    // Push(3): [5,3]       [5,3]     ← min so far = 3
+    // Push(7): [5,3,7]     [5,3,3]   ← 7 > 3, min so far still = 3
+    // Push(2): [5,3,7,2]   [5,3,3,2] ← min so far = 2
+    //
+    // GetMin() → _min.Peek() = 2   O(1) ✓
+    //
+    // Pop():   [5,3,7]     [5,3,3]   ← removed 2 from both, min instantly back to 3
+    // GetMin() → _min.Peek() = 3   O(1) ✓
+    //
+    // Pop():   [5,3]       [5,3]     ← removed 7 from both, min still 3
+    // GetMin() → _min.Peek() = 3   O(1) ✓
+    //
+    // Pop():   [5]         [5]       ← removed 3 from both, min back to 5
+    // GetMin() → _min.Peek() = 5   O(1) ✓
+
+    public class MinStack
+    {
+        private readonly Stack<int> _stack = new(); // regular stack
+        private readonly Stack<int> _min = new();   // parallel min stack, same size as _stack
+
+        public void Push(int val)
+        {
+            _stack.Push(val);
+
+            // For the min stack: if empty take val, otherwise take the smaller of val and current min
+            int currentMin = _min.Count == 0 ? val : Math.Min(val, _min.Peek());
+
+            _min.Push(currentMin);
+        }
+
+        public void Pop()
+        {
+            // Always pop both stacks together to keep them the same size
+            _stack.Pop();
+            _min.Pop();
+        }
+
+        // Always O(1) — no searching, just peek the top of the min stack
+        public int GetMin() => _min.Peek();
+
+        public int Top() => _stack.Peek();
+    }
+
+    public class TrieNode
+    {
+        public Dictionary<char, TrieNode> Children = new();
+        public bool IsEnd = false;
+        public int Count = 0; // how many words pass through this node
+    }
+
+    public class Trie
+    {
+        private readonly TrieNode _root = new();
+
+        // Insert — O(m)
+        public void Insert(string word)
+        {
+            var node = _root;
+            foreach (var ch in word)
+            {
+                if (!node.Children.ContainsKey(ch))
+                    node.Children[ch] = new TrieNode();
+                node = node.Children[ch];
+            }
+            node.IsEnd = true;
+        }
+
+        // Exact word search — O(m)
+        public bool Search(string word)
+        {
+            var node = _root;
+            foreach (var ch in word)
+            {
+                if (!node.Children.ContainsKey(ch))
+                    return false;
+                node = node.Children[ch];
+            }
+            return node.IsEnd; // must reach end!
+        }
+
+        // Prefix check — O(m)
+        public bool StartsWith(string prefix)
+        {
+            var node = _root;
+            foreach (var ch in prefix)
+            {
+                if (!node.Children.ContainsKey(ch))
+                    return false;
+                node = node.Children[ch];
+            }
+            return true; // any node is fine
         }
     }
 
@@ -798,9 +903,215 @@ internal class Program
         // Empty string — valid (nothing to mismatch)
         Console.WriteLine(IsValid(""));         // True
 
-        //Min Stack — GetMin in O(1)
-        //Maintain a parallel minStack that tracks the running minimum at every level.
+        // Min Stack — All operations O(1): Push, Pop, Top, GetMin
+        // Maintain a parallel minStack that tracks the running minimum at every level.
 
-        #endregion Part 5 — Stacks & Queues
+        var minStack = new MinStack();
+
+        minStack.Push(5);
+        Console.WriteLine(minStack.GetMin()); // 5
+
+        minStack.Push(3);
+        Console.WriteLine(minStack.GetMin()); // 3
+
+        minStack.Push(7);
+        Console.WriteLine(minStack.GetMin()); // 3 — 7 is bigger, min stays 3
+
+        minStack.Push(2);
+        Console.WriteLine(minStack.GetMin()); // 2 — new minimum
+
+        minStack.Pop(); // remove 2
+        Console.WriteLine(minStack.GetMin()); // 3 — back to previous min
+
+        minStack.Pop(); // remove 7
+        Console.WriteLine(minStack.GetMin()); // 3
+
+        minStack.Pop(); // remove 3
+        Console.WriteLine(minStack.GetMin()); // 5 — back to original
+
+        Console.WriteLine(minStack.Top());    // 5 — top of stack
+    #endregion Part 5 — Stacks & Queues
+
+    #region Part 7 — Trie (Dictionary / Prefix Tree)
+    //// ─── Setup ───────────────────────────────────────────────
+    //var trie = new Trie();
+    //trie.Insert("app");
+    //trie.Insert("apple");
+    //trie.Insert("application");
+    //trie.Insert("apt");
+    //trie.Insert("bat");
+    //trie.Insert("ball");
+
+    //// ─── Basic Search ────────────────────────────────────────
+    //Console.WriteLine(trie.Search("app"));         // True  — inserted directly
+    //Console.WriteLine(trie.Search("apple"));       // True
+    //Console.WriteLine(trie.Search("ap"));          // False — never inserted, only a prefix
+    //Console.WriteLine(trie.StartsWith("ap"));      // True  — valid prefix
+    //Console.WriteLine(trie.StartsWith("xyz"));     // False
+
+    //// ─── 1. Return all words with a given prefix (DFS) ───────
+    //// Traverse to the prefix node, then DFS to collect all IsEnd nodes
+    //List<string> GetWordsWithPrefix(string prefix)
+    //{
+    //    var result = new List<string>();
+    //    var node = _root; // start from root
+    //                      // walk to the end of the prefix
+    //    foreach (var ch in prefix)
+    //    {
+    //        if (!node.Children.ContainsKey(ch))
+    //            return result; // prefix not found
+    //        node = node.Children[ch];
+    //    }
+    //    // DFS from the prefix node, carrying the current word built so far
+    //    DFS(node, new StringBuilder(prefix), result);
+    //    return result;
+    //}
+
+    //void DFS(TrieNode node, StringBuilder current, List<string> result)
+    //{
+    //    if (node.IsEnd)
+    //        result.Add(current.ToString()); // found a complete word
+    //    foreach (var (ch, child) in node.Children)
+    //    {
+    //        current.Append(ch);
+    //        DFS(child, current, result);
+    //        current.Remove(current.Length - 1, 1); // backtrack
+    //    }
+    //}
+
+    //var words1 = GetWordsWithPrefix("app");
+    //Console.WriteLine(string.Join(", ", words1)); // app, apple, application
+
+    //// ─── 2. Count words starting with prefix ─────────────────
+    //// Store a Count at each node, increment on every Insert pass-through
+    //// Modified TrieNode:
+
+
+    //// Modified Insert:
+    //public void Insert(string word)
+    //{
+    //    var node = _root;
+    //    foreach (var ch in word)
+    //    {
+    //        if (!node.Children.ContainsKey(ch))
+    //            node.Children[ch] = new TrieNode();
+    //        node = node.Children[ch];
+    //        node.Count++; // increment every node we pass through
+    //    }
+    //    node.IsEnd = true;
+    //}
+
+    //// Count is then just:
+    //int CountWordsWithPrefix(string prefix)
+    //{
+    //    var node = _root;
+    //    foreach (var ch in prefix)
+    //    {
+    //        if (!node.Children.ContainsKey(ch))
+    //            return 0;
+    //        node = node.Children[ch];
+    //    }
+    //    return node.Count; // already tracked!
+    //}
+
+    //Console.WriteLine(CountWordsWithPrefix("app")); // 3 (app, apple, application)
+    //Console.WriteLine(CountWordsWithPrefix("apt")); // 1
+    //Console.WriteLine(CountWordsWithPrefix("ba"));  // 2 (bat, ball)
+
+    //// ─── 3. Delete a word ────────────────────────────────────
+    //// Set IsEnd=false, then clean up empty nodes on the way back (recursively)
+    //bool Delete(string word)
+    //{
+    //    return DeleteHelper(_root, word, 0);
+    //}
+
+    //bool DeleteHelper(TrieNode node, string word, int depth)
+    //{
+    //    if (depth == word.Length)
+    //    {
+    //        if (!node.IsEnd) return false; // word doesn't exist
+    //        node.IsEnd = false;
+    //        return node.Children.Count == 0; // true = safe to delete this node
+    //    }
+    //    var ch = word[depth];
+    //    if (!node.Children.ContainsKey(ch)) return false;
+    //    bool shouldDelete = DeleteHelper(node.Children[ch], word, depth + 1);
+    //    if (shouldDelete)
+    //        node.Children.Remove(ch); // clean up empty node
+    //    return shouldDelete && node.Children.Count == 0 && !node.IsEnd;
+    //}
+
+    //trie.Insert("apple");
+    //trie.Insert("app");
+    //Console.WriteLine(trie.Search("apple")); // True
+    //Delete("apple");
+    //Console.WriteLine(trie.Search("apple")); // False
+    //Console.WriteLine(trie.Search("app"));   // True  — shared nodes preserved!
+
+    //// ─── 4. Autocomplete ─────────────────────────────────────
+    //var autoTrie = new Trie();
+    //foreach (var w in new[] { "car", "card", "care", "careful", "cat", "dog" })
+    //    autoTrie.Insert(w);
+
+    //var suggestions = GetWordsWithPrefix("car"); // reuses DFS from above
+    //Console.WriteLine(string.Join(", ", suggestions)); // car, card, care, careful
+    #endregion Part 7 — Trie (Dictionary / Prefix Tree)
+
+    #region Part 8 — Coin Change &Dynamic Programming
+        /*
+
+        Initial: dp = [1, 0, 0, 0]
+                       0  1  2  3
+
+        // ── coin = 1 ──────────────────────────────
+        i = 1: dp[1] += dp[1 - 1] = dp[0] = 1  →  dp = [1, 1, 0, 0]
+        i = 2: dp[2] += dp[2 - 1] = dp[1] = 1  →  dp = [1, 1, 1, 0]
+        i = 3: dp[3] += dp[3 - 1] = dp[2] = 1  →  dp = [1, 1, 1, 1]
+        // using only 1s: one way to make each amount ✓
+
+        // ── coin = 2 ──────────────────────────────
+        i = 2: dp[2] += dp[2 - 2] = dp[0] = 1  →  dp = [1, 1, 2, 1]
+        // amount 2 now has 2 ways: (1+1) and (2)
+        i = 3: dp[3] += dp[3 - 2] = dp[1] = 1  →  dp = [1, 1, 2, 2]
+        // amount 3 now has 2 ways: (1+1+1) and (1+2)
+
+        // ── coin = 5 ──────────────────────────────
+        // i starts at 5, which is > 3, so loop doesn't execute
+
+        return dp[3] = 2 ✓
+
+        */
+        int CountAllWaysToReachAmount(int[] coins, int amount)
+        {
+            int[] dp = new int[amount + 1];
+
+            // Base case: there is exactly 1 way to make amount 0 — use no coins
+            // This seeds all future dp[i] calculations
+            dp[0] = 1;
+
+            // Outer loop: process one coin denomination at a time
+            // This ensures we count COMBINATIONS not PERMUTATIONS
+            // (1+2) and (2+1) are the same combination, counted once
+            foreach (int coin in coins)
+            {
+                // For each amount from coin up to target,
+                // ask: how many ways can I make (i - coin)?
+                // adding current coin to each of those ways gives a new way to make i
+                for (int i = coin; i <= amount; i++)
+                {
+                    // dp[i - coin] = ways to make the remainder after using this coin
+                    dp[i] += dp[i - coin];
+                }
+            }
+
+            return dp[amount];
+        }
+
+        int[] coins = { 1, 2, 5 };
+        int amount = 3;
+
+        int minCoinsResult = CountAllWaysToReachAmount(coins, amount);
+        Console.WriteLine(minCoinsResult); // Output: 2
+        #endregion Part 8 — Coin Change &Dynamic Programming
     }
 }
